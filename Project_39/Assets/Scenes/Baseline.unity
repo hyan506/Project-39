@@ -612,7 +612,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Timer Left: 20'
+  m_Text: 'Time Left: 20'
 --- !u!222 &1975208482
 CanvasRenderer:
   m_ObjectHideFlags: 0
