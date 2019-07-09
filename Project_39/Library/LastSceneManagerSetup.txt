@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/Polygons/1 - 100k.unity
+- path: Assets/Scenes/Dynamic Lights/ON/1 - ON.unity
   isLoaded: 1
   isActive: 1
