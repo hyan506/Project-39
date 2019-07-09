@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/Polygons/STOP.unity
+- path: Assets/Scenes/Polygons/1 - 100k.unity
   isLoaded: 1
   isActive: 1
