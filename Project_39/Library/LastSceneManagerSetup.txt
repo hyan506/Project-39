@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/Dynamic Lights/FAR/30 - FAR.unity
+- path: Assets/Scenes/Post Processing/1 - PP.unity
   isLoaded: 1
   isActive: 1
