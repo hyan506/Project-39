@@ -21,7 +21,7 @@ MonoBehaviour:
   m_ShowMode: 4
   m_Title: 
   m_RootView: {fileID: 6}
-  m_MinSize: {x: 950, y: 300}
+  m_MinSize: {x: 950, y: 548}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &2
 MonoBehaviour:
@@ -218,7 +218,7 @@ MonoBehaviour:
   m_MinSize: {x: 406, y: 498}
   m_MaxSize: {x: 10002, y: 14048}
   vertical: 1
-  controlID: 110
+  controlID: 25
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -243,7 +243,7 @@ MonoBehaviour:
   m_MinSize: {x: 406, y: 224}
   m_MaxSize: {x: 8006, y: 4024}
   vertical: 0
-  controlID: 111
+  controlID: 26
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -263,8 +263,8 @@ MonoBehaviour:
     y: 0
     width: 2101
     height: 788
-  m_MinSize: {x: 204, y: 224}
-  m_MaxSize: {x: 4004, y: 4024}
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 16}
   m_Panes:
   - {fileID: 15}
@@ -309,34 +309,34 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scenes/Post Processing
+    - Assets/Scenes/UE - Static
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Scenes/Post Processing
+  - Assets/Scenes/UE - Static
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\panca\Desktop\Project-39\Project_39
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 7e2b0000
-    m_LastClickedID: 11134
-    m_ExpandedIDs: 00000000fc260000ee270000fe2700003a2a00007e2b000000ca9a3b
+    m_SelectedIDs: c02c0000
+    m_LastClickedID: 11456
+    m_ExpandedIDs: 00000000a0280000fc290000122a0000242d0000ea2e000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: 
-      m_OriginalName: 
+      m_Name: UE - Moving
+      m_OriginalName: UE - Moving
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 0
+      m_UserData: 1062838
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 11
+      m_OriginalEventType: 0
       m_IsRenamingFilename: 1
       m_ClientGUIView: {fileID: 5}
     m_SearchString: 
@@ -350,7 +350,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000fc260000ee270000fe2700003a2a00007e2b0000
+    m_ExpandedIDs: 00000000a0280000fc290000122a0000242d0000ea2e0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -469,9 +469,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 7e2b0000
+      m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: d6fbffff
+      m_ExpandedIDs: 4cafffff82afffff9cafffffbeafffffecafffff1ab0ffff48b0ffff76b0ffffa4b0ffffd2b0ffff00b1ffff2eb1ffff5cb1ffff8ab1ffffb8b1ffffc8b1ffff10b2ffff4ab2ffff80b2ffff9ab2ffffbcb2ffffe8b2ffff14b3ffff40b3ffff6cb3ffff98b3ffffc4b3fffff0b3ffff1cb4ffff48b4ffff74b4ffffa0b4ffffb0b4fffff8b4ffff2eb5ffff48b5ffff66b5ffff8eb5ffffb6b5ffffdeb5ffff06b6ffff2eb6ffff56b6ffff7eb6ffffa6b6ffffceb6fffff6b6ffff1eb7ffff2ab7ffff6eb7ffff9eb7ffffc4b7fffff4b7ffff20b8ffff50b8ffff7cb8ffffa8b8ffffd8b8ffff04b9ffff30b9ffff5eb9ffff8ab9ffffb6b9ffffe2b9ffff08baffff32baffff5cbaffff86baffffb0baffffdabaffff08bbffff32bbffff5cbbffff8abbffffb4bbffffe0bbffff0abcffff8cbcffff0ebdffffa2bdffff24beffffa6beffff28bfffffaabfffff2cc0ffffaec0ffff42c1ffffc4c1ffff46c2ffff80c2ffffb6c2ffffd0c2ffff96c4ffffa6c4ffffd2c4fffffec4ffff2ac5ffff56c5ffff82c5ffffaec5ffffdac5ffff06c6ffff32c6ffff5ec6ffff8ac6ffff3ec7ffffe8c7ffff6ac8ffffecc8ffff80c9ffff02caffff84caffff06cbffff88cbffff0accffff9eccffff20cdffff50cdffff7ecdffffaecdffffdccdffff66cfffff94cfffffc2cfffffeccfffff1ad0ffff44d0ffff6ed0ffff98d0ffffc6d0fffff2d0ffff1cd1ffff46d1ffff74d1ffff1cd2ffffc4d2ffff6cd3ffff14d4ffffbcd4ffff6cd5ffff14d6ffffbcd6ffffe6d6ffff10d7ffff3ed7ffff6cd7ffff96d7ffffc0d7ffff78d8ffff20d9ffffc8d9fffff6d9ffff26daffff56daffff86daffffb2daffffe2daffff12dbffff42dbffff72dbffffa2dbffffd2dbffff00dcffff30dcffff5edcffff8edcffffb8dcffff0adeffff66deffffbedfffffeedfffff14e0ffff40e0ffff6ce0ffff9ce0ffffcce0fffffce0ffff28e1ffff56e1ffff86e1ffffb6e1ffffe2e1ffff0ee2ffff3ee2ffff64e2ffff94e2ffffd4e2ffff14e3ffff54e3ffffbee3ffffeae3ffff18e4ffff46e4ffff84e4ffffc4e4fffffce4ffff3ce5ffff6ce5ffffa4e5ffff12e6ffff52e6ffff7ee6ffffaae6ffffdae6ffff36e7ffffbee7ffffeee7ffff1ee8ffff4ee8ffff7ae8ffffbae8ffff08e9ffff5ee9ffff8ae9ffffb8e9ffffe8e9ffff12eaffff3ceaffff66eaffff90eaffffbeeaffffeceaffff1aebffff48ebffff76ebffffa4ebffffceebfffff8ebffffacecffff54edfffffcedffffa4eeffff78f0ffffa2f0fffffef0ffff2af1ffff58f1ffff14f2ffffd8f2ffff04f3ffff2ef3ffff5ef3ffffb2f7ffffe4f9ffff42fbffffb8fbffffd2f61800c6391a0098bc1a00ca051b00fc061b00ae421b0038ed1b0004461c00649c1c00869d1c008ab71c008ef91c00b6fa1c0004991e00d61b1f0008651f003a661f00eca11f00764c200042a52000a2fb2000c4fc2000c8162100cc582100f4592100
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -527,9 +527,9 @@ MonoBehaviour:
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 79.36265, y: 58.232376, z: 281.1882}
+    m_Target: {x: -2.4745874, y: 1.7418141, z: 1.3505161}
     speed: 2
-    m_Value: {x: 79.36265, y: 58.232376, z: 281.1882}
+    m_Value: {x: -2.4745874, y: 1.7418141, z: 1.3505161}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -557,13 +557,13 @@ MonoBehaviour:
       speed: 2
       m_Value: 0
   m_Rotation:
-    m_Target: {x: 0.03695459, y: -0.10713236, z: -0.0039853295, w: -0.9935498}
+    m_Target: {x: 0.15740165, y: 0.5478532, z: -0.10583254, w: 0.814789}
     speed: 2
-    m_Value: {x: 0.03695459, y: -0.10713235, z: -0.0039853295, w: -0.9935498}
+    m_Value: {x: 0.15740165, y: 0.5478532, z: -0.10583254, w: 0.814789}
   m_Size:
-    m_Target: 400.10373
+    m_Target: 5.0828543
     speed: 2
-    m_Value: 400.10373
+    m_Value: 5.0828543
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -653,7 +653,7 @@ MonoBehaviour:
   m_LastWindowPixelSize: {x: 2097, y: 768}
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
-  m_LowResolutionForAspectRatios: 01000000000100000100
+  m_LowResolutionForAspectRatios: 01000001000100000100
   m_XRRenderMode: 0
 --- !u!114 &17
 MonoBehaviour:
