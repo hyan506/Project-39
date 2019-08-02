@@ -10,20 +10,38 @@ public class VRGaze : MonoBehaviour {
 
 	public GameObject a;
 	public GameObject b;
+	public GameObject c;
+	public GameObject l;
 	public GameObject n;
 	public GameObject debug;
 	public Image img;
 	private RaycastHit _hit;
 	bool gazeStatus = false;
-	int sceneNumber = 1;
+	int sceneNumber = 0;
 	int frameRate = 60;
+	int direction = 0;
 	double gazeTime = 0.0;
+	double decideTime = 0.0;
 	double waitOldTime = 0.0;
 	double capOldTime = 0.0;
 	double capDeltaTime = 0.0;
 	double capCurrentTime = 0.0;
+	double currentY = 0.0;
+	double currentX = 0.0;
+	double prevY = 0.0;
+	double prevX = 0.0;
+	double currentLeft = 0.0;
+	double currentRight = 0.0;
+	double currentUp = 0.0;
+	double currentDown = 0.0;
+	double maxLeft = 0.0;
+	double maxRight = 0.0;
+	double maxUp = 0.0;
+	double maxDown = 0.0;
 	string fps = "60";
 	Scene scene;
+	int[] order = {35, 45, 20, 31, 5, 25, 55, 32, 40, 30, 10, 33, 50, 60, 15, 34,
+				   35, 50, 34, 25, 31, 40, 5, 45, 55, 32, 60, 30, 15, 33, 10, 20};
 
 	// Start is called before the first frame update
 	void Start() {
@@ -54,104 +72,141 @@ public class VRGaze : MonoBehaviour {
 		else if (scene.name == "T - 3") {
 			frameRate = 30;
 		}
-		else if (sceneNumber == 1) {
-			fps = "35";
-			frameRate = 35;
-			n.GetComponent<TextMesh>().text = "Scenes Left: 16";
-		}
-		else if (sceneNumber == 2) {
-			fps = "45";
-			frameRate = 45;
-			n.GetComponent<TextMesh>().text = "Scenes Left: 15";
-		}
-		else if (sceneNumber == 3) {
-			fps = "20";
-			frameRate = 20;
-			n.GetComponent<TextMesh>().text = "Scenes Left: 14";
-		}
-		else if (sceneNumber == 4) {
-			fps = "31";
-			frameRate = 31;
-			n.GetComponent<TextMesh>().text = "Scenes Left: 13";
-		}
-		else if (sceneNumber == 5) {
-			fps = "5";
-			frameRate = 5;
-			n.GetComponent<TextMesh>().text = "Scenes Left: 12";
-		}
-		else if (sceneNumber == 6) {
-			fps = "25";
-			frameRate = 25;
-			n.GetComponent<TextMesh>().text = "Scenes Left: 11";
-		}
-		else if (sceneNumber == 7) {
-			fps = "55";
-			frameRate = 55;
-			n.GetComponent<TextMesh>().text = "Scenes Left: 10";
-		}
-		else if (sceneNumber == 8) {
-			fps = "32";
-			frameRate = 32;
-			n.GetComponent<TextMesh>().text = "Scenes Left: 9";
-		}
-		else if (sceneNumber == 9) {
-			fps = "40";
-			frameRate = 40;
-			n.GetComponent<TextMesh>().text = "Scenes Left: 8";
-		}
-		else if (sceneNumber == 10) {
-			fps = "30";
-			frameRate = 30;
-			n.GetComponent<TextMesh>().text = "Scenes Left: 7";
-		}
-		else if (sceneNumber == 11) {
-			fps = "10";
-			frameRate = 10;
-			n.GetComponent<TextMesh>().text = "Scenes Left: 6";
-		}
-		else if (sceneNumber == 12) {
-			fps = "33";
-			frameRate = 33;
-			n.GetComponent<TextMesh>().text = "Scenes Left: 5";
-		}
-		else if (sceneNumber == 13) {
-			fps = "50";
-			frameRate = 50;
-			n.GetComponent<TextMesh>().text = "Scenes Left: 4";
-		}
-		else if (sceneNumber == 14) {
-			fps = "60";
+		else if (scene.name == "UE - STOP") {
 			frameRate = 60;
-			n.GetComponent<TextMesh>().text = "Scenes Left: 3";
-		}
-		else if (sceneNumber == 15) {
-			fps = "15";
-			frameRate = 15;
-			n.GetComponent<TextMesh>().text = "Scenes Left: 2";
-		}
-		else if (sceneNumber == 16) {
-			fps = "34";
-			frameRate = 34;
-			n.GetComponent<TextMesh>().text = "Scenes Left: 1";
 		}
 		else {
-			frameRate = 60;
+			frameRate = order[sceneNumber];
+			fps = frameRate.ToString();
+			n.GetComponent<TextMesh>().text = "Scenes Left: " + (32 - sceneNumber);
 		}
 
 		// Busy waits to cap the FPS.
 		capDeltaTime = 1.0 / frameRate;
 		capCurrentTime = Time.realtimeSinceStartup;
-
 		while ((capCurrentTime - capOldTime) < capDeltaTime) {
 			capCurrentTime = Time.realtimeSinceStartup;
 		}
-
 		capOldTime = Time.realtimeSinceStartup;
+
+		// Waits for a decision.
+		decideTime += Time.deltaTime;
+
+		// Gets the camera's in-game (not Euler!) rotation values.
+		if (c.transform.eulerAngles.y > 180) {
+			currentY = c.transform.eulerAngles.y - 360;
+		}
+		else {
+			currentY = c.transform.eulerAngles.y;
+		}
+		if (c.transform.eulerAngles.x > 180) {
+			currentX = c.transform.eulerAngles.x - 360;
+		}
+		else {
+			currentX = c.transform.eulerAngles.x;
+		}
+
+		// Measures the user's range of motion before the buttons appear.
+		if (a.activeSelf == false && b.activeSelf == false) {
+
+			// The user is currently looking left.
+			if (currentY < prevY) {
+
+				// This means that the user has stopped looking right. Update the max right value and reset.
+				if (currentRight > maxRight) {
+					maxRight = currentRight;
+				}
+				currentRight = 0;
+
+				// Updates the current left value.
+				currentLeft += Math.Abs(currentY - prevY);
+			}
+
+			// The user is currently looking right.
+			else if (currentY > prevY) {
+
+				// This means that the user has stopped looking left. Update the max left value and reset.
+				if (currentLeft > maxLeft) {
+					maxLeft = currentLeft;
+				}
+				currentLeft = 0;
+
+				// Updates the current right value.
+				currentRight += Math.Abs(currentY - prevY);
+			}
+
+			// The user is currently looking up.
+			if (currentX < prevX) {
+
+				// This means that the user has stopped looking down. Update the max down value and reset.
+				if (currentDown > maxDown) {
+					maxDown = currentDown;
+				}
+				currentDown = 0;
+
+				// Updates the current up value.
+				currentUp += Math.Abs(currentX - prevX);
+			}
+
+			// The user is currently looking down.
+			else if (currentX > prevX) {
+
+				// This means that the user has stopped looking up. Update the max up value and reset.
+				if (currentUp > maxUp) {
+					maxUp = currentUp;
+				}
+				currentUp = 0;
+
+				// Updates the current down value.
+				currentDown += Math.Abs(currentX - prevX);
+			}
+		}
+		prevY = currentY;
+		prevX = currentX;
+
+		// Moves the lion when appropriate.
+		if (sceneNumber >= 16) {
+			l.transform.rotation = Quaternion.Euler(0, 180, 0);
+
+			// Moves the lion.
+			if (direction == 0) {
+				l.transform.Translate((float)0.05, 0, 0);
+			}
+			else if (direction == 1) {
+				l.transform.Translate((float)-0.05, 0, 0);
+			}
+
+			// Changes the lion's direction.
+			if (l.transform.position.x <= -1.5) {
+				direction = 1;
+			}
+			else if (l.transform.position.x >= 1.5) {
+				direction = 0;
+			}
+		}
 
 		// Waits for a few seconds before the buttons are revealed.
 		if (Time.realtimeSinceStartup - waitOldTime >= 5) {
 			a.SetActive(true);
 			b.SetActive(true);
+
+			// Measures the user's range of motion one last time.
+			if (currentRight > maxRight) {
+				maxRight = currentRight;
+			}
+			currentRight = 0;
+			if (currentLeft > maxLeft) {
+				maxLeft = currentLeft;
+			}
+			currentLeft = 0;
+			if (currentDown > maxDown) {
+				maxDown = currentDown;
+			}
+			currentDown = 0;
+			if (currentUp > maxUp) {
+				maxUp = currentUp;
+			}
+			currentUp = 0;
 		}
 
 		// Fills the reticle if it's on a target.
@@ -172,9 +227,11 @@ public class VRGaze : MonoBehaviour {
 			++sceneNumber;
 
 			// Logs the appropriate response.
-			string path = Application.persistentDataPath + "Results.txt";
-			string smooth = fps + " - Smooth";
-			string laggy = fps + " - Laggy";
+			//string path = Application.persistentDataPath + "Results.txt";
+			string path = "C:/Users/panca/Desktop/Results.txt";
+			string smooth = fps + " - Smooth\t\t";
+			string laggy = fps + " - Laggy\t\t";
+
 			if (_hit.transform.CompareTag("Start")) {
 				StreamWriter writer = new StreamWriter(path, true);
 				writer.WriteLine("New user evaluation started.");
@@ -182,14 +239,43 @@ public class VRGaze : MonoBehaviour {
 			}
 			else if (_hit.transform.CompareTag("Smooth")) {
 				StreamWriter writer = new StreamWriter(path, true);
-				writer.WriteLine(smooth);
+				writer.Write(smooth);
 				writer.Close();
 			}
 			else if (_hit.transform.CompareTag("Laggy")) {
 				StreamWriter writer = new StreamWriter(path, true);
-				writer.WriteLine(laggy);
+				writer.Write(laggy);
 				writer.Close();
 			}
+
+			// Finds and logs the current FPS.
+			double currentFPS = Math.Round(1.0 / Time.unscaledDeltaTime, 2);
+			StreamWriter writerExtra = new StreamWriter(path, true);
+
+			writerExtra.Write("(Actual FPS: ");
+			writerExtra.Write(currentFPS);
+
+			writerExtra.Write("\t\tTime to Decide: ");
+			writerExtra.Write(Math.Round(decideTime - 6, 2));
+			decideTime = 0.0;
+
+			writerExtra.Write("\t\tMax Left: ");
+			writerExtra.Write(Math.Round(maxLeft, 2));
+			maxLeft = 0.0;
+
+			writerExtra.Write("\t\tMax Right: ");
+			writerExtra.Write(Math.Round(maxRight, 2));
+			maxRight = 0.0;
+
+			writerExtra.Write("\t\tMax Up: ");
+			writerExtra.Write(Math.Round(maxUp, 2));
+			maxUp = 0.0;
+
+			writerExtra.Write("\t\tMax Down: ");
+			writerExtra.Write(Math.Round(maxDown, 2));
+			maxDown = 0.0;
+			writerExtra.WriteLine(")");
+			writerExtra.Close();
 
 			// Loads the next scene.
 			if (scene.name == "START") {
@@ -207,39 +293,6 @@ public class VRGaze : MonoBehaviour {
 				writer.Close();
 				SceneManager.LoadScene("UE - SCENES");
 			}
-			/*else if (scene.name == "UE - 5") {
-				SceneManager.LoadScene("UE - 6");
-			}
-			else if (scene.name == "UE - 6") {
-				SceneManager.LoadScene("UE - 7");
-			}
-			else if (scene.name == "UE - 7") {
-				SceneManager.LoadScene("UE - 8");
-			}
-			else if (scene.name == "UE - 8") {
-				SceneManager.LoadScene("UE - 9");
-			}
-			else if (scene.name == "UE - 9") {
-				SceneManager.LoadScene("UE - 10");
-			}
-			else if (scene.name == "UE - 10") {
-				SceneManager.LoadScene("UE - 11");
-			}
-			else if (scene.name == "UE - 11") {
-				SceneManager.LoadScene("UE - 12");
-			}
-			else if (scene.name == "UE - 12") {
-				SceneManager.LoadScene("UE - 13");
-			}
-			else if (scene.name == "UE - 13") {
-				SceneManager.LoadScene("UE - 14");
-			}
-			else if (scene.name == "UE - 14") {
-				SceneManager.LoadScene("UE - 15");
-			}
-			else if (scene.name == "UE - 15") {
-				SceneManager.LoadScene("UE - 16");
-			}*/
 			else if (sceneNumber == 17) {
 				StreamWriter writer = new StreamWriter(path, true);
 				writer.WriteLine("END");

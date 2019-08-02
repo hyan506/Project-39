@@ -61,7 +61,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\AutoSwitchScenes.cs" />
-    <Compile Include="Assets\ForceFPS.cs" />
     <Compile Include="Assets\FPSCounter.cs" />
     <Compile Include="Assets\FPSDisplay.cs" />
     <Compile Include="Assets\GoogleVR\Beta\Demos\Scripts\DemoObjectController6DoF.cs" />

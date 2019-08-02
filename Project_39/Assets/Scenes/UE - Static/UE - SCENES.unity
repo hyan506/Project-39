@@ -299,6 +299,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   a: {fileID: 34035048}
   b: {fileID: 440073041}
+  c: {fileID: 534669902}
+  l: {fileID: 885353050}
   n: {fileID: 1517960273}
   debug: {fileID: 1171628467}
   img: {fileID: 755600880}
@@ -915,6 +917,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 755600878}
   m_CullTransparentMesh: 0
+--- !u!1 &885353050 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 116990, guid: 311e54faa8a36f44ba713b6638fdf534,
+    type: 3}
+  m_PrefabInstance: {fileID: 933500514}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &933500514
 PrefabInstance:
   m_ObjectHideFlags: 0
