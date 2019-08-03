@@ -13,6 +13,7 @@ public class VRGaze : MonoBehaviour {
 	public GameObject c;
 	public GameObject l;
 	public GameObject n;
+	public GameObject s;
 	public GameObject debug;
 	public Image img;
 	private RaycastHit _hit;
@@ -22,6 +23,7 @@ public class VRGaze : MonoBehaviour {
 	int direction = 0;
 	double gazeTime = 0.0;
 	double decideTime = 0.0;
+	double resetTime = 0.0;
 	double waitOldTime = 0.0;
 	double capOldTime = 0.0;
 	double capDeltaTime = 0.0;
@@ -53,7 +55,7 @@ public class VRGaze : MonoBehaviour {
 		capOldTime = Time.realtimeSinceStartup;
 
 		// Enables the FPS counter.
-		debug.SetActive(true);
+		debug.SetActive(false);
 	}
 
 	// Update is called once per frame
@@ -209,6 +211,22 @@ public class VRGaze : MonoBehaviour {
 			currentUp = 0;
 		}
 
+		// Allows the user to skip to the moving object test.
+		if (scene.name == "UE - SCENES" && sceneNumber < 16) {
+			s.SetActive(true);
+		}
+		else {
+			s.SetActive(false);
+		}
+
+		// Once the user evaluation is completed, reset it after a few seconds.
+		if (scene.name == "UE - STOP") {
+			resetTime += Time.deltaTime;
+			if (resetTime >= 10) {
+				SceneManager.LoadScene("START");
+			}
+		}
+
 		// Fills the reticle if it's on a target.
 		if (gazeStatus == true) {
 			gazeTime += Time.deltaTime;
@@ -219,7 +237,7 @@ public class VRGaze : MonoBehaviour {
 		Ray r = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
 
 		// Logs the appropriate response and loads the next scene.
-		if (Physics.Raycast(r, out _hit) == true && img.fillAmount >= 1) {
+		if (Physics.Raycast(r, out _hit) == true && img.fillAmount >= 1 && _hit.transform.CompareTag("Lion") == false) {
 
 			a.SetActive(false);
 			b.SetActive(false);
@@ -227,77 +245,102 @@ public class VRGaze : MonoBehaviour {
 			++sceneNumber;
 
 			// Logs the appropriate response.
-			//string path = Application.persistentDataPath + "Results.txt";
-			string path = "C:/Users/panca/Desktop/Results.txt";
-			string smooth = fps + " - Smooth\t\t";
-			string laggy = fps + " - Laggy\t\t";
+			string path = Application.persistentDataPath + "Results.txt";
+			string smooth = fps + "\t\tSmooth";
+			string laggy = fps + "\t\tLaggy";
 
 			if (_hit.transform.CompareTag("Start")) {
 				StreamWriter writer = new StreamWriter(path, true);
-				writer.WriteLine("New user evaluation started.");
+				writer.WriteLine("Started new user evaluation.");
 				writer.Close();
-			}
-			else if (_hit.transform.CompareTag("Smooth")) {
-				StreamWriter writer = new StreamWriter(path, true);
-				writer.Write(smooth);
-				writer.Close();
-			}
-			else if (_hit.transform.CompareTag("Laggy")) {
-				StreamWriter writer = new StreamWriter(path, true);
-				writer.Write(laggy);
-				writer.Close();
-			}
-
-			// Finds and logs the current FPS.
-			double currentFPS = Math.Round(1.0 / Time.unscaledDeltaTime, 2);
-			StreamWriter writerExtra = new StreamWriter(path, true);
-
-			writerExtra.Write("(Actual FPS: ");
-			writerExtra.Write(currentFPS);
-
-			writerExtra.Write("\t\tTime to Decide: ");
-			writerExtra.Write(Math.Round(decideTime - 6, 2));
-			decideTime = 0.0;
-
-			writerExtra.Write("\t\tMax Left: ");
-			writerExtra.Write(Math.Round(maxLeft, 2));
-			maxLeft = 0.0;
-
-			writerExtra.Write("\t\tMax Right: ");
-			writerExtra.Write(Math.Round(maxRight, 2));
-			maxRight = 0.0;
-
-			writerExtra.Write("\t\tMax Up: ");
-			writerExtra.Write(Math.Round(maxUp, 2));
-			maxUp = 0.0;
-
-			writerExtra.Write("\t\tMax Down: ");
-			writerExtra.Write(Math.Round(maxDown, 2));
-			maxDown = 0.0;
-			writerExtra.WriteLine(")");
-			writerExtra.Close();
-
-			// Loads the next scene.
-			if (scene.name == "START") {
 				SceneManager.LoadScene("T - 1");
 			}
-			else if (scene.name == "T - 1") {
-				SceneManager.LoadScene("T - 2");
-			}
-			else if (scene.name == "T - 2") {
-				SceneManager.LoadScene("T - 3");
-			}
-			else if (scene.name == "T - 3") {
+			else if (_hit.transform.CompareTag("Reset")) {
 				StreamWriter writer = new StreamWriter(path, true);
-				writer.WriteLine("Tutorial completed.");
+				writer.WriteLine("User evaluation reset.");
 				writer.Close();
-				SceneManager.LoadScene("UE - SCENES");
+				SceneManager.LoadScene("START");
 			}
-			else if (sceneNumber == 17) {
+			else if (_hit.transform.CompareTag("Skip")) {
 				StreamWriter writer = new StreamWriter(path, true);
-				writer.WriteLine("END");
+				writer.WriteLine("Skipped to moving object test.");
 				writer.Close();
-				SceneManager.LoadScene("UE - STOP");
+				sceneNumber = 16;
+				decideTime = 0.0;
+				maxLeft = 0.0;
+				maxRight = 0.0;
+				maxUp = 0.0;
+				maxDown = 0.0;
+			}
+			else {
+				if (scene.name == "UE - SCENES") {
+					if (_hit.transform.CompareTag("Smooth")) {
+						StreamWriter writer = new StreamWriter(path, true);
+						writer.Write(smooth);
+						writer.Close();
+					}
+					else if (_hit.transform.CompareTag("Laggy")) {
+						StreamWriter writer = new StreamWriter(path, true);
+						writer.Write(laggy);
+						writer.Close();
+					}
+
+					// Finds and logs the current FPS.
+					double currentFPS = Math.Round(1.0 / Time.unscaledDeltaTime, 2);
+					StreamWriter writerExtra = new StreamWriter(path, true);
+
+					writerExtra.Write("\t\t");
+					writerExtra.Write(currentFPS);
+
+					writerExtra.Write("\t\t");
+					writerExtra.Write(Math.Round(decideTime - 6, 2));
+					decideTime = 0.0;
+
+					writerExtra.Write("\t\t");
+					writerExtra.Write(Math.Round(maxLeft, 2));
+					maxLeft = 0.0;
+
+					writerExtra.Write("\t\t");
+					writerExtra.Write(Math.Round(maxRight, 2));
+					maxRight = 0.0;
+
+					writerExtra.Write("\t\t");
+					writerExtra.Write(Math.Round(maxUp, 2));
+					maxUp = 0.0;
+
+					writerExtra.Write("\t\t");
+					writerExtra.WriteLine(Math.Round(maxDown, 2));
+					maxDown = 0.0;
+					writerExtra.Close();
+
+					if (sceneNumber == 16) {
+						StreamWriter writer = new StreamWriter(path, true);
+						writer.WriteLine("Started moving object test.");
+						writer.Close();
+					}
+
+					// Loads the next scene when appropriate.
+					if (sceneNumber == 32) {
+						StreamWriter writer = new StreamWriter(path, true);
+						writer.WriteLine("User evaluation completed.");
+						writer.Close();
+						SceneManager.LoadScene("UE - STOP");
+					}
+				}
+				else {
+					if (scene.name == "T - 1") {
+						SceneManager.LoadScene("T - 2");
+					}
+					else if (scene.name == "T - 2") {
+						SceneManager.LoadScene("T - 3");
+					}
+					else if (scene.name == "T - 3") {
+						StreamWriter writer = new StreamWriter(path, true);
+						writer.WriteLine("Started static object test. (Set FPS, User Decision, FPS at Decision, Time to Decide (s), Max Left Rotation (deg), Max Right Rotation (deg), Max Up Rotation (deg), Max Down Rotation (deg))");
+						writer.Close();
+						SceneManager.LoadScene("UE - SCENES");
+					}
+				}
 			}
 		}
 		else if (Physics.Raycast(r, out _hit) == false) {

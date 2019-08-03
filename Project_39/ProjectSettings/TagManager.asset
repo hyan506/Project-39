@@ -7,6 +7,9 @@ TagManager:
   - Smooth
   - Laggy
   - Start
+  - Reset
+  - Skip
+  - Lion
   layers:
   - Default
   - TransparentFX
