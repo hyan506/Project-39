@@ -21,10 +21,10 @@ public class VRGaze : MonoBehaviour {
 	int sceneNumber = 0;
 	int frameRate = 60;
 	int direction = 0;
+	int decided = 0;
 	double gazeTime = 0.0;
 	double decideTime = 0.0;
 	double resetTime = 0.0;
-	double waitOldTime = 0.0;
 	double capOldTime = 0.0;
 	double capDeltaTime = 0.0;
 	double capCurrentTime = 0.0;
@@ -41,6 +41,7 @@ public class VRGaze : MonoBehaviour {
 	double maxUp = 0.0;
 	double maxDown = 0.0;
 	string fps = "60";
+	string path;
 	Scene scene;
 	int[] order = {35, 45, 20, 31, 5, 25, 55, 32, 40, 30, 10, 33, 50, 60, 15, 34,
 				   35, 50, 34, 25, 31, 40, 5, 45, 55, 32, 60, 30, 15, 33, 10, 20};
@@ -51,7 +52,9 @@ public class VRGaze : MonoBehaviour {
 		// Gets the scene name.
 		scene = SceneManager.GetActiveScene();
 
-		waitOldTime = Time.realtimeSinceStartup;
+		// Defines where to save the results.
+		path = Application.persistentDataPath + "Results.txt";
+
 		capOldTime = Time.realtimeSinceStartup;
 
 		// Enables the FPS counter.
@@ -91,124 +94,104 @@ public class VRGaze : MonoBehaviour {
 		}
 		capOldTime = Time.realtimeSinceStartup;
 
-		// Waits for a decision.
-		decideTime += Time.deltaTime;
+		/************************* All of the below happens before the user makes a decision. *************************/
+		if (decided == 0) {
 
-		// Gets the camera's in-game (not Euler!) rotation values.
-		if (c.transform.eulerAngles.y > 180) {
-			currentY = c.transform.eulerAngles.y - 360;
-		}
-		else {
-			currentY = c.transform.eulerAngles.y;
-		}
-		if (c.transform.eulerAngles.x > 180) {
-			currentX = c.transform.eulerAngles.x - 360;
-		}
-		else {
-			currentX = c.transform.eulerAngles.x;
-		}
+			/************************* Waits for a decision. *************************/
+			decideTime += Time.deltaTime;
 
-		// Measures the user's range of motion before the buttons appear.
-		if (a.activeSelf == false && b.activeSelf == false) {
+			/************************* Gets the camera's in-game (not Euler!) rotation values. *************************/
+			if (c.transform.eulerAngles.y > 180) {
+				currentY = c.transform.eulerAngles.y - 360;
+			}
+			else {
+				currentY = c.transform.eulerAngles.y;
+			}
+			if (c.transform.eulerAngles.x > 180) {
+				currentX = c.transform.eulerAngles.x - 360;
+			}
+			else {
+				currentX = c.transform.eulerAngles.x;
+			}
 
-			// The user is currently looking left.
-			if (currentY < prevY) {
+			/************************* Measures the user's range of motion before the buttons appear. *************************/
+			if (a.activeSelf == false && b.activeSelf == false) {
 
-				// This means that the user has stopped looking right. Update the max right value and reset.
-				if (currentRight > maxRight) {
-					maxRight = currentRight;
+				// The user is currently looking left.
+				if (currentY < prevY) {
+
+					// This means that the user has stopped looking right. Update the max right value and reset.
+					if (currentRight > maxRight) {
+						maxRight = currentRight;
+					}
+					currentRight = 0;
+
+					// Updates the current left value.
+					currentLeft += Math.Abs(currentY - prevY);
 				}
-				currentRight = 0;
 
-				// Updates the current left value.
-				currentLeft += Math.Abs(currentY - prevY);
-			}
+				// The user is currently looking right.
+				else if (currentY > prevY) {
 
-			// The user is currently looking right.
-			else if (currentY > prevY) {
+					// This means that the user has stopped looking left. Update the max left value and reset.
+					if (currentLeft > maxLeft) {
+						maxLeft = currentLeft;
+					}
+					currentLeft = 0;
 
-				// This means that the user has stopped looking left. Update the max left value and reset.
-				if (currentLeft > maxLeft) {
-					maxLeft = currentLeft;
+					// Updates the current right value.
+					currentRight += Math.Abs(currentY - prevY);
 				}
-				currentLeft = 0;
 
-				// Updates the current right value.
-				currentRight += Math.Abs(currentY - prevY);
-			}
+				// The user is currently looking up.
+				if (currentX < prevX) {
 
-			// The user is currently looking up.
-			if (currentX < prevX) {
+					// This means that the user has stopped looking down. Update the max down value and reset.
+					if (currentDown > maxDown) {
+						maxDown = currentDown;
+					}
+					currentDown = 0;
 
-				// This means that the user has stopped looking down. Update the max down value and reset.
-				if (currentDown > maxDown) {
-					maxDown = currentDown;
+					// Updates the current up value.
+					currentUp += Math.Abs(currentX - prevX);
 				}
-				currentDown = 0;
 
-				// Updates the current up value.
-				currentUp += Math.Abs(currentX - prevX);
-			}
+				// The user is currently looking down.
+				else if (currentX > prevX) {
 
-			// The user is currently looking down.
-			else if (currentX > prevX) {
+					// This means that the user has stopped looking up. Update the max up value and reset.
+					if (currentUp > maxUp) {
+						maxUp = currentUp;
+					}
+					currentUp = 0;
 
-				// This means that the user has stopped looking up. Update the max up value and reset.
-				if (currentUp > maxUp) {
-					maxUp = currentUp;
+					// Updates the current down value.
+					currentDown += Math.Abs(currentX - prevX);
 				}
-				currentUp = 0;
+			}
+			prevY = currentY;
+			prevX = currentX;
 
-				// Updates the current down value.
-				currentDown += Math.Abs(currentX - prevX);
-			}
-		}
-		prevY = currentY;
-		prevX = currentX;
+			/************************* Moves the lion when appropriate. *************************/
+			if (sceneNumber >= 16) {
+				l.transform.rotation = Quaternion.Euler(0, 180, 0);
 
-		// Moves the lion when appropriate.
-		if (sceneNumber >= 16) {
-			l.transform.rotation = Quaternion.Euler(0, 180, 0);
+				// Moves the lion.
+				if (direction == 0) {
+					l.transform.Translate((float)0.05, 0, 0);
+				}
+				else if (direction == 1) {
+					l.transform.Translate((float)-0.05, 0, 0);
+				}
 
-			// Moves the lion.
-			if (direction == 0) {
-				l.transform.Translate((float)0.05, 0, 0);
+				// Changes the lion's direction.
+				if (l.transform.position.x <= -1.5) {
+					direction = 1;
+				}
+				else if (l.transform.position.x >= 1.5) {
+					direction = 0;
+				}
 			}
-			else if (direction == 1) {
-				l.transform.Translate((float)-0.05, 0, 0);
-			}
-
-			// Changes the lion's direction.
-			if (l.transform.position.x <= -1.5) {
-				direction = 1;
-			}
-			else if (l.transform.position.x >= 1.5) {
-				direction = 0;
-			}
-		}
-
-		// Waits for a few seconds before the buttons are revealed.
-		if (Time.realtimeSinceStartup - waitOldTime >= 5) {
-			a.SetActive(true);
-			b.SetActive(true);
-
-			// Measures the user's range of motion one last time.
-			if (currentRight > maxRight) {
-				maxRight = currentRight;
-			}
-			currentRight = 0;
-			if (currentLeft > maxLeft) {
-				maxLeft = currentLeft;
-			}
-			currentLeft = 0;
-			if (currentDown > maxDown) {
-				maxDown = currentDown;
-			}
-			currentDown = 0;
-			if (currentUp > maxUp) {
-				maxUp = currentUp;
-			}
-			currentUp = 0;
 		}
 
 		// Allows the user to skip to the moving object test.
@@ -236,18 +219,8 @@ public class VRGaze : MonoBehaviour {
 		// Creates a ray.
 		Ray r = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
 
-		// Logs the appropriate response and loads the next scene.
+		/************************* Actions for different button presses. *************************/
 		if (Physics.Raycast(r, out _hit) == true && img.fillAmount >= 1 && _hit.transform.CompareTag("Lion") == false) {
-
-			a.SetActive(false);
-			b.SetActive(false);
-			waitOldTime = Time.realtimeSinceStartup;
-			++sceneNumber;
-
-			// Logs the appropriate response.
-			string path = Application.persistentDataPath + "Results.txt";
-			string smooth = fps + "\t\tSmooth";
-			string laggy = fps + "\t\tLaggy";
 
 			if (_hit.transform.CompareTag("Start")) {
 				StreamWriter writer = new StreamWriter(path, true);
@@ -271,76 +244,112 @@ public class VRGaze : MonoBehaviour {
 				maxRight = 0.0;
 				maxUp = 0.0;
 				maxDown = 0.0;
+				decided = 0;
+				a.SetActive(true);
+				b.SetActive(true);
 			}
 			else {
-				if (scene.name == "UE - SCENES") {
-					if (_hit.transform.CompareTag("Smooth")) {
-						StreamWriter writer = new StreamWriter(path, true);
-						writer.Write(smooth);
-						writer.Close();
-					}
-					else if (_hit.transform.CompareTag("Laggy")) {
-						StreamWriter writer = new StreamWriter(path, true);
-						writer.Write(laggy);
-						writer.Close();
-					}
 
-					// Finds and logs the current FPS.
-					double currentFPS = Math.Round(1.0 / Time.unscaledDeltaTime, 2);
-					StreamWriter writerExtra = new StreamWriter(path, true);
+				// The user has decided.
+				decided = 1;
+				a.SetActive(false);
+				b.SetActive(false);
 
-					writerExtra.Write("\t\t");
-					writerExtra.Write(currentFPS);
-
-					writerExtra.Write("\t\t");
-					writerExtra.Write(Math.Round(decideTime - 6, 2));
-					decideTime = 0.0;
-
-					writerExtra.Write("\t\t");
-					writerExtra.Write(Math.Round(maxLeft, 2));
-					maxLeft = 0.0;
-
-					writerExtra.Write("\t\t");
-					writerExtra.Write(Math.Round(maxRight, 2));
-					maxRight = 0.0;
-
-					writerExtra.Write("\t\t");
-					writerExtra.Write(Math.Round(maxUp, 2));
-					maxUp = 0.0;
-
-					writerExtra.Write("\t\t");
-					writerExtra.WriteLine(Math.Round(maxDown, 2));
-					maxDown = 0.0;
-					writerExtra.Close();
-
-					if (sceneNumber == 16) {
-						StreamWriter writer = new StreamWriter(path, true);
-						writer.WriteLine("Started moving object test.");
-						writer.Close();
-					}
-
-					// Loads the next scene when appropriate.
-					if (sceneNumber == 32) {
-						StreamWriter writer = new StreamWriter(path, true);
-						writer.WriteLine("User evaluation completed.");
-						writer.Close();
-						SceneManager.LoadScene("UE - STOP");
-					}
+				// Measures the user's range of motion one last time.
+				if (currentRight > maxRight) {
+					maxRight = currentRight;
 				}
-				else {
-					if (scene.name == "T - 1") {
-						SceneManager.LoadScene("T - 2");
-					}
-					else if (scene.name == "T - 2") {
-						SceneManager.LoadScene("T - 3");
-					}
-					else if (scene.name == "T - 3") {
-						StreamWriter writer = new StreamWriter(path, true);
-						writer.WriteLine("Started static object test. (Set FPS, User Decision, FPS at Decision, Time to Decide (s), Max Left Rotation (deg), Max Right Rotation (deg), Max Up Rotation (deg), Max Down Rotation (deg))");
-						writer.Close();
-						SceneManager.LoadScene("UE - SCENES");
-					}
+				currentRight = 0;
+				if (currentLeft > maxLeft) {
+					maxLeft = currentLeft;
 				}
+				currentLeft = 0;
+				if (currentDown > maxDown) {
+					maxDown = currentDown;
+				}
+				currentDown = 0;
+				if (currentUp > maxUp) {
+					maxUp = currentUp;
+				}
+				currentUp = 0;
+
+				// Logs the decision.
+				if (_hit.transform.CompareTag("Smooth")) {
+					string smooth = fps + "\t\tSmooth";
+					StreamWriter writer = new StreamWriter(path, true);
+					writer.Write(smooth);
+					writer.Close();
+				}
+				else if (_hit.transform.CompareTag("Laggy")) {
+					string laggy = fps + "\t\tLaggy";
+					StreamWriter writer = new StreamWriter(path, true);
+					writer.Write(laggy);
+					writer.Close();
+				}
+
+				// Finds and logs the current FPS + other stuff.
+				double currentFPS = Math.Round(1.0 / Time.unscaledDeltaTime, 2);
+				StreamWriter writerExtra = new StreamWriter(path, true);
+
+				writerExtra.Write("\t\t");
+				writerExtra.Write(currentFPS);
+
+				writerExtra.Write("\t\t");
+				writerExtra.Write(Math.Round(decideTime - 1, 2));
+				decideTime = 0.0;
+
+				writerExtra.Write("\t\t");
+				writerExtra.Write(Math.Round(maxLeft, 2));
+				maxLeft = 0.0;
+
+				writerExtra.Write("\t\t");
+				writerExtra.Write(Math.Round(maxRight, 2));
+				maxRight = 0.0;
+
+				writerExtra.Write("\t\t");
+				writerExtra.Write(Math.Round(maxUp, 2));
+				maxUp = 0.0;
+
+				writerExtra.Write("\t\t");
+				writerExtra.WriteLine(Math.Round(maxDown, 2));
+				maxDown = 0.0;
+				writerExtra.Close();
+
+				if (sceneNumber == 16) {
+					StreamWriter writer = new StreamWriter(path, true);
+					writer.WriteLine("Started moving object test.");
+					writer.Close();
+				}
+			}
+		}
+
+		/************************* Actions once the user has decided and looked at the lion. *************************/
+		else if (Physics.Raycast(r, out _hit) == true && _hit.transform.CompareTag("Lion") && decided == 1) {
+
+			// Readies the next FPS test.
+			decided = 0;
+			a.SetActive(true);
+			b.SetActive(true);
+			++sceneNumber;
+
+			// Loads the next scene when appropriate.
+			if (scene.name == "T - 1") {
+				SceneManager.LoadScene("T - 2");
+			}
+			else if (scene.name == "T - 2") {
+				SceneManager.LoadScene("T - 3");
+			}
+			else if (scene.name == "T - 3") {
+				StreamWriter writer = new StreamWriter(path, true);
+				writer.WriteLine("Started static object test. (Set FPS, User Decision, FPS at Decision, Time to Decide (s), Max Left Rotation (deg), Max Right Rotation (deg), Max Up Rotation (deg), Max Down Rotation (deg))");
+				writer.Close();
+				SceneManager.LoadScene("UE - SCENES");
+			}
+			else if (scene.name == "UE - SCENES" && sceneNumber == 32) {
+				StreamWriter writer = new StreamWriter(path, true);
+				writer.WriteLine("User evaluation completed.");
+				writer.Close();
+				SceneManager.LoadScene("UE - STOP");
 			}
 		}
 		else if (Physics.Raycast(r, out _hit) == false) {
