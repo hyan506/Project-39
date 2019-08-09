@@ -15,13 +15,17 @@ public class VRGaze : MonoBehaviour {
 	public GameObject n;
 	public GameObject s;
 	public GameObject debug;
+	public GameObject look1;
+	public GameObject look2;
 	public Image img;
 	private RaycastHit _hit;
+
 	bool gazeStatus = false;
 	int sceneNumber = 0;
 	int frameRate = 60;
 	int direction = 0;
 	int decided = 0;
+	int zoom = 0;
 	double gazeTime = 0.0;
 	double decideTime = 0.0;
 	double resetTime = 0.0;
@@ -84,6 +88,20 @@ public class VRGaze : MonoBehaviour {
 			frameRate = order[sceneNumber];
 			fps = frameRate.ToString();
 			n.GetComponent<TextMesh>().text = "Scenes Left: " + (32 - sceneNumber);
+
+			// Gives the appearance of progression.
+			if (zoom == 0) {
+				n.GetComponent<TextMesh>().fontSize += 10;
+				if (n.GetComponent<TextMesh>().fontSize == 150) {
+					zoom = 1;
+				}
+			}
+			else if (zoom == 1) {
+				n.GetComponent<TextMesh>().fontSize -= 10;
+				if (n.GetComponent<TextMesh>().fontSize == 50) {
+					zoom = 2;
+				}
+			}
 		}
 
 		// Busy waits to cap the FPS.
@@ -114,60 +132,57 @@ public class VRGaze : MonoBehaviour {
 				currentX = c.transform.eulerAngles.x;
 			}
 
-			/************************* Measures the user's range of motion before the buttons appear. *************************/
-			if (a.activeSelf == false && b.activeSelf == false) {
+			/************************* Measures the user's range of motion before they finish deciding. *************************/
+			// The user is currently looking left.
+			if (currentY < prevY) {
 
-				// The user is currently looking left.
-				if (currentY < prevY) {
-
-					// This means that the user has stopped looking right. Update the max right value and reset.
-					if (currentRight > maxRight) {
-						maxRight = currentRight;
-					}
-					currentRight = 0;
-
-					// Updates the current left value.
-					currentLeft += Math.Abs(currentY - prevY);
+				// This means that the user has stopped looking right. Update the max right value and reset.
+				if (currentRight > maxRight) {
+					maxRight = currentRight;
 				}
+				currentRight = 0;
 
-				// The user is currently looking right.
-				else if (currentY > prevY) {
+				// Updates the current left value.
+				currentLeft += Math.Abs(currentY - prevY);
+			}
 
-					// This means that the user has stopped looking left. Update the max left value and reset.
-					if (currentLeft > maxLeft) {
-						maxLeft = currentLeft;
-					}
-					currentLeft = 0;
+			// The user is currently looking right.
+			else if (currentY > prevY) {
 
-					// Updates the current right value.
-					currentRight += Math.Abs(currentY - prevY);
+				// This means that the user has stopped looking left. Update the max left value and reset.
+				if (currentLeft > maxLeft) {
+					maxLeft = currentLeft;
 				}
+				currentLeft = 0;
 
-				// The user is currently looking up.
-				if (currentX < prevX) {
+				// Updates the current right value.
+				currentRight += Math.Abs(currentY - prevY);
+			}
 
-					// This means that the user has stopped looking down. Update the max down value and reset.
-					if (currentDown > maxDown) {
-						maxDown = currentDown;
-					}
-					currentDown = 0;
+			// The user is currently looking up.
+			if (currentX < prevX) {
 
-					// Updates the current up value.
-					currentUp += Math.Abs(currentX - prevX);
+				// This means that the user has stopped looking down. Update the max down value and reset.
+				if (currentDown > maxDown) {
+					maxDown = currentDown;
 				}
+				currentDown = 0;
 
-				// The user is currently looking down.
-				else if (currentX > prevX) {
+				// Updates the current up value.
+				currentUp += Math.Abs(currentX - prevX);
+			}
 
-					// This means that the user has stopped looking up. Update the max up value and reset.
-					if (currentUp > maxUp) {
-						maxUp = currentUp;
-					}
-					currentUp = 0;
+			// The user is currently looking down.
+			else if (currentX > prevX) {
 
-					// Updates the current down value.
-					currentDown += Math.Abs(currentX - prevX);
+				// This means that the user has stopped looking up. Update the max up value and reset.
+				if (currentUp > maxUp) {
+					maxUp = currentUp;
 				}
+				currentUp = 0;
+
+				// Updates the current down value.
+				currentDown += Math.Abs(currentX - prevX);
 			}
 			prevY = currentY;
 			prevX = currentX;
@@ -219,6 +234,11 @@ public class VRGaze : MonoBehaviour {
 		// Creates a ray.
 		Ray r = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
 
+		// Unfills the reticle when appropriate.
+		if (Physics.Raycast(r, out _hit) == false || (_hit.transform.CompareTag("Untagged") == true && decided == 1)) {
+			GazeOff();
+		}
+
 		/************************* Actions for different button presses. *************************/
 		if (Physics.Raycast(r, out _hit) == true && img.fillAmount >= 1 && _hit.transform.CompareTag("Lion") == false) {
 
@@ -245,8 +265,12 @@ public class VRGaze : MonoBehaviour {
 				maxUp = 0.0;
 				maxDown = 0.0;
 				decided = 0;
+				zoom = 0;
 				a.SetActive(true);
 				b.SetActive(true);
+				look1.SetActive(false);
+				look2.SetActive(false);
+				n.GetComponent<TextMesh>().fontSize = 50;
 			}
 			else {
 
@@ -254,6 +278,8 @@ public class VRGaze : MonoBehaviour {
 				decided = 1;
 				a.SetActive(false);
 				b.SetActive(false);
+				look1.SetActive(true);
+				look2.SetActive(true);
 
 				// Measures the user's range of motion one last time.
 				if (currentRight > maxRight) {
@@ -288,37 +314,39 @@ public class VRGaze : MonoBehaviour {
 				}
 
 				// Finds and logs the current FPS + other stuff.
-				double currentFPS = Math.Round(1.0 / Time.unscaledDeltaTime, 2);
-				StreamWriter writerExtra = new StreamWriter(path, true);
+				if (scene.name == "UE - SCENES") {
+					double currentFPS = Math.Round(1.0 / Time.unscaledDeltaTime, 2);
+					StreamWriter writerExtra = new StreamWriter(path, true);
 
-				writerExtra.Write("\t\t");
-				writerExtra.Write(currentFPS);
+					writerExtra.Write("\t\t");
+					writerExtra.Write(currentFPS);
 
-				writerExtra.Write("\t\t");
-				writerExtra.Write(Math.Round(decideTime - 1, 2));
-				decideTime = 0.0;
+					writerExtra.Write("\t\t");
+					writerExtra.Write(Math.Round(decideTime - 1, 2));
+					decideTime = 0.0;
 
-				writerExtra.Write("\t\t");
-				writerExtra.Write(Math.Round(maxLeft, 2));
-				maxLeft = 0.0;
+					writerExtra.Write("\t\t");
+					writerExtra.Write(Math.Round(maxLeft, 2));
+					maxLeft = 0.0;
 
-				writerExtra.Write("\t\t");
-				writerExtra.Write(Math.Round(maxRight, 2));
-				maxRight = 0.0;
+					writerExtra.Write("\t\t");
+					writerExtra.Write(Math.Round(maxRight, 2));
+					maxRight = 0.0;
 
-				writerExtra.Write("\t\t");
-				writerExtra.Write(Math.Round(maxUp, 2));
-				maxUp = 0.0;
+					writerExtra.Write("\t\t");
+					writerExtra.Write(Math.Round(maxUp, 2));
+					maxUp = 0.0;
 
-				writerExtra.Write("\t\t");
-				writerExtra.WriteLine(Math.Round(maxDown, 2));
-				maxDown = 0.0;
-				writerExtra.Close();
+					writerExtra.Write("\t\t");
+					writerExtra.WriteLine(Math.Round(maxDown, 2));
+					maxDown = 0.0;
+					writerExtra.Close();
 
-				if (sceneNumber == 16) {
-					StreamWriter writer = new StreamWriter(path, true);
-					writer.WriteLine("Started moving object test.");
-					writer.Close();
+					if (sceneNumber == 16) {
+						StreamWriter writer = new StreamWriter(path, true);
+						writer.WriteLine("Started moving object test.");
+						writer.Close();
+					}
 				}
 			}
 		}
@@ -328,9 +356,16 @@ public class VRGaze : MonoBehaviour {
 
 			// Readies the next FPS test.
 			decided = 0;
+			zoom = 0;
 			a.SetActive(true);
 			b.SetActive(true);
+			look1.SetActive(false);
+			look2.SetActive(false);
 			++sceneNumber;
+
+			if (scene.name == "UE - SCENES") {
+				n.GetComponent<TextMesh>().fontSize = 50;
+			}
 
 			// Loads the next scene when appropriate.
 			if (scene.name == "T - 1") {
@@ -351,9 +386,6 @@ public class VRGaze : MonoBehaviour {
 				writer.Close();
 				SceneManager.LoadScene("UE - STOP");
 			}
-		}
-		else if (Physics.Raycast(r, out _hit) == false) {
-			GazeOff();
 		}
 	}
 

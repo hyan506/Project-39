@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 8ef199b54a63fdb4ca0c36e40f57bcd5, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -162,7 +162,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 8ef199b54a63fdb4ca0c36e40f57bcd5, type: 2}
+  - {fileID: 2100000, guid: 029cb7e3f6d38854aa4cfc06b69ebfbd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -197,14 +197,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 34035048}
-  m_LocalRotation: {x: 0.12278779, y: 0.6963643, z: 0.12278779, w: 0.6963643}
-  m_LocalPosition: {x: 0, y: -5, z: 10}
+  m_LocalRotation: {x: -0.18301266, y: 0.6830127, z: -0.18301266, w: 0.6830127}
+  m_LocalPosition: {x: 0, y: 5, z: 10}
   m_LocalScale: {x: 1, y: 3, z: 3}
   m_Children:
   - {fileID: 1211938708}
   m_Father: {fileID: 0}
   m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 20}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: -30}
 --- !u!114 &34035053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -304,6 +304,8 @@ MonoBehaviour:
   n: {fileID: 1525848706}
   s: {fileID: 313682718}
   debug: {fileID: 1171628467}
+  look1: {fileID: 1525848706}
+  look2: {fileID: 1525848706}
   img: {fileID: 755600880}
 --- !u!1001 &160696609
 PrefabInstance:
@@ -1572,14 +1574,9 @@ TextMesh:
   m_Text: 'Welcome!
 
 
-    Before we begin the actual tests, let''s first
+    Please look directly at the button
 
-    go through some practice runs.
-
-
-    When you''re ready, please hover over
-
-    the ''Start'' button above.'
+    above to start the tutorial.'
   m_OffsetZ: 0
   m_CharacterSize: 0.1
   m_LineSpacing: 1
