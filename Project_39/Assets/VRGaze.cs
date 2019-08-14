@@ -26,6 +26,7 @@ public class VRGaze : MonoBehaviour {
 	int direction = 0;
 	int decided = 0;
 	int zoom = 0;
+	double logTime = 0.0;
 	double gazeTime = 0.0;
 	double decideTime = 0.0;
 	double resetTime = 0.0;
@@ -46,6 +47,7 @@ public class VRGaze : MonoBehaviour {
 	double maxDown = 0.0;
 	string fps = "60";
 	string path;
+	string pathFPS;
 	Scene scene;
 	int[] order = {35, 45, 20, 31, 5, 25, 55, 32, 40, 30, 10, 33, 50, 60, 15, 34,
 				   35, 50, 34, 25, 31, 40, 5, 45, 55, 32, 60, 30, 15, 33, 10, 20};
@@ -53,11 +55,17 @@ public class VRGaze : MonoBehaviour {
 	// Start is called before the first frame update
 	void Start() {
 
+		// Initialises the user's ID.
+		if (!(PlayerPrefs.GetInt("ID") >= 0)) {
+			PlayerPrefs.SetInt("ID", 0);
+		}
+
 		// Gets the scene name.
 		scene = SceneManager.GetActiveScene();
 
 		// Defines where to save the results.
 		path = Application.persistentDataPath + "Results.txt";
+		pathFPS = Application.persistentDataPath + "FPSLog.txt";
 
 		capOldTime = Time.realtimeSinceStartup;
 
@@ -207,6 +215,17 @@ public class VRGaze : MonoBehaviour {
 					direction = 0;
 				}
 			}
+
+			/************************* Logs the FPS every 100 ms. *************************/
+			logTime += Time.deltaTime;
+			if (logTime >= 0.1 && scene.name == "UE - SCENES") {
+				logTime = 0;
+				double currentFPS = Math.Round(1.0 / Time.unscaledDeltaTime, 2);
+				StreamWriter writer = new StreamWriter(pathFPS, true);
+				writer.Write(currentFPS);
+				writer.Write("\t");
+				writer.Close();
+			}
 		}
 
 		// Allows the user to skip to the moving object test.
@@ -243,21 +262,35 @@ public class VRGaze : MonoBehaviour {
 		if (Physics.Raycast(r, out _hit) == true && img.fillAmount >= 1 && _hit.transform.CompareTag("Lion") == false) {
 
 			if (_hit.transform.CompareTag("Start")) {
+				PlayerPrefs.SetInt("ID", PlayerPrefs.GetInt("ID") + 1);
 				StreamWriter writer = new StreamWriter(path, true);
 				writer.WriteLine("Started new user evaluation.");
 				writer.Close();
+				StreamWriter writerLog = new StreamWriter(pathFPS, true);
+				writerLog.WriteLine("Started new user evaluation.");
+				writerLog.Close();
 				SceneManager.LoadScene("T - 1");
 			}
 			else if (_hit.transform.CompareTag("Reset")) {
 				StreamWriter writer = new StreamWriter(path, true);
+				writer.WriteLine("\t");
 				writer.WriteLine("User evaluation reset.");
 				writer.Close();
+				StreamWriter writerLog = new StreamWriter(pathFPS, true);
+				writerLog.WriteLine("\t");
+				writerLog.WriteLine("User evaluation reset.");
+				writerLog.Close();
 				SceneManager.LoadScene("START");
 			}
 			else if (_hit.transform.CompareTag("Skip")) {
 				StreamWriter writer = new StreamWriter(path, true);
+				writer.WriteLine("\t");
 				writer.WriteLine("Skipped to moving object test.");
 				writer.Close();
+				StreamWriter writerLog = new StreamWriter(pathFPS, true);
+				writerLog.WriteLine("\t");
+				writerLog.WriteLine("Skipped to moving object test.");
+				writerLog.Close();
 				sceneNumber = 16;
 				decideTime = 0.0;
 				maxLeft = 0.0;
@@ -299,15 +332,32 @@ public class VRGaze : MonoBehaviour {
 				}
 				currentUp = 0;
 
+				// Logs some metadata.
+				if (scene.name == "UE - SCENES") {
+					StreamWriter writerExtra = new StreamWriter(path, true);
+					writerExtra.Write(PlayerPrefs.GetInt("ID").ToString() + "\t");
+					writerExtra.Close();
+					if (sceneNumber < 16) {
+						StreamWriter writer = new StreamWriter(path, true);
+						writer.Write("Static\t");
+						writer.Close();
+					}
+					else {
+						StreamWriter writer = new StreamWriter(path, true);
+						writer.Write("Dynamic\t");
+						writer.Close();
+					}
+				}
+
 				// Logs the decision.
 				if (_hit.transform.CompareTag("Smooth")) {
-					string smooth = fps + "\t\tSmooth";
+					string smooth = fps + "\tSmooth\t";
 					StreamWriter writer = new StreamWriter(path, true);
 					writer.Write(smooth);
 					writer.Close();
 				}
 				else if (_hit.transform.CompareTag("Laggy")) {
-					string laggy = fps + "\t\tLaggy";
+					string laggy = fps + "\tLaggy\t";
 					StreamWriter writer = new StreamWriter(path, true);
 					writer.Write(laggy);
 					writer.Close();
@@ -316,37 +366,31 @@ public class VRGaze : MonoBehaviour {
 				// Finds and logs the current FPS + other stuff.
 				if (scene.name == "UE - SCENES") {
 					double currentFPS = Math.Round(1.0 / Time.unscaledDeltaTime, 2);
-					StreamWriter writerExtra = new StreamWriter(path, true);
+					StreamWriter writer = new StreamWriter(path, true);
 
-					writerExtra.Write("\t\t");
-					writerExtra.Write(currentFPS);
-
-					writerExtra.Write("\t\t");
-					writerExtra.Write(Math.Round(decideTime - 1, 2));
+					writer.Write(Math.Round(decideTime - 1, 2));
+					writer.Write("\t");
 					decideTime = 0.0;
 
-					writerExtra.Write("\t\t");
-					writerExtra.Write(Math.Round(maxLeft, 2));
+					writer.Write(Math.Round(maxLeft, 2));
+					writer.Write("\t");
 					maxLeft = 0.0;
 
-					writerExtra.Write("\t\t");
-					writerExtra.Write(Math.Round(maxRight, 2));
+					writer.Write(Math.Round(maxRight, 2));
+					writer.Write("\t");
 					maxRight = 0.0;
 
-					writerExtra.Write("\t\t");
-					writerExtra.Write(Math.Round(maxUp, 2));
+					writer.Write(Math.Round(maxUp, 2));
+					writer.Write("\t");
 					maxUp = 0.0;
 
-					writerExtra.Write("\t\t");
-					writerExtra.WriteLine(Math.Round(maxDown, 2));
+					writer.WriteLine(Math.Round(maxDown, 2));
 					maxDown = 0.0;
-					writerExtra.Close();
+					writer.Close();
 
-					if (sceneNumber == 16) {
-						StreamWriter writer = new StreamWriter(path, true);
-						writer.WriteLine("Started moving object test.");
-						writer.Close();
-					}
+					StreamWriter writerLog = new StreamWriter(pathFPS, true);
+					writerLog.WriteLine(currentFPS);
+					writerLog.Close();
 				}
 			}
 		}
@@ -376,14 +420,20 @@ public class VRGaze : MonoBehaviour {
 			}
 			else if (scene.name == "T - 3") {
 				StreamWriter writer = new StreamWriter(path, true);
-				writer.WriteLine("Started static object test. (Set FPS, User Decision, FPS at Decision, Time to Decide (s), Max Left Rotation (deg), Max Right Rotation (deg), Max Up Rotation (deg), Max Down Rotation (deg))");
+				writer.WriteLine("User ID\tTest Type\tSet FPS\tUser Decision\tTime to Decide (s)\tMax Left Rotation (deg)\tMax Right Rotation (deg)\tMax Up Rotation (deg)\tMax Down Rotation (deg)");
 				writer.Close();
+				StreamWriter writerLog = new StreamWriter(pathFPS, true);
+				writerLog.WriteLine("Actual FPS until Decision (every 100 ms)");
+				writerLog.Close();
 				SceneManager.LoadScene("UE - SCENES");
 			}
 			else if (scene.name == "UE - SCENES" && sceneNumber == 32) {
 				StreamWriter writer = new StreamWriter(path, true);
 				writer.WriteLine("User evaluation completed.");
 				writer.Close();
+				StreamWriter writerLog = new StreamWriter(pathFPS, true);
+				writerLog.WriteLine("User evaluation completed.");
+				writerLog.Close();
 				SceneManager.LoadScene("UE - STOP");
 			}
 		}
