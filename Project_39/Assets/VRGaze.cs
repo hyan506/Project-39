@@ -272,6 +272,7 @@ public class VRGaze : MonoBehaviour {
 				SceneManager.LoadScene("T - 1");
 			}
 			else if (_hit.transform.CompareTag("Reset")) {
+				PlayerPrefs.SetInt("ID", PlayerPrefs.GetInt("ID") - 1);
 				StreamWriter writer = new StreamWriter(path, true);
 				writer.WriteLine("\t");
 				writer.WriteLine("User evaluation reset.");
@@ -407,6 +408,21 @@ public class VRGaze : MonoBehaviour {
 			look2.SetActive(false);
 			++sceneNumber;
 
+			// Resets rotation values.
+			if (c.transform.eulerAngles.y > 180) {
+				prevY = c.transform.eulerAngles.y - 360;
+			}
+			else {
+				prevY = c.transform.eulerAngles.y;
+			}
+			if (c.transform.eulerAngles.x > 180) {
+				prevX = c.transform.eulerAngles.x - 360;
+			}
+			else {
+				prevX = c.transform.eulerAngles.x;
+			}
+
+			// Resets the text's font size.
 			if (scene.name == "UE - SCENES") {
 				n.GetComponent<TextMesh>().fontSize = 50;
 			}
