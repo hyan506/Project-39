@@ -95,20 +95,23 @@ public class VRGaze : MonoBehaviour {
 		else {
 			frameRate = order[sceneNumber];
 			fps = frameRate.ToString();
-			n.GetComponent<TextMesh>().text = "Scenes Left: " + (32 - sceneNumber);
+			n.GetComponent<TextMesh>().text = (32 - sceneNumber).ToString();
 
 			// Gives the appearance of progression.
 			if (zoom == 0) {
-				n.GetComponent<TextMesh>().fontSize += 10;
+				n.GetComponent<TextMesh>().fontSize += 20;
 				if (n.GetComponent<TextMesh>().fontSize == 150) {
 					zoom = 1;
 				}
 			}
 			else if (zoom == 1) {
-				n.GetComponent<TextMesh>().fontSize -= 10;
+				n.GetComponent<TextMesh>().fontSize -= 20;
 				if (n.GetComponent<TextMesh>().fontSize == 50) {
 					zoom = 2;
 				}
+			}
+			else if (zoom == 2) {
+				n.GetComponent<TextMesh>().characterSize = 0;
 			}
 		}
 
@@ -305,6 +308,7 @@ public class VRGaze : MonoBehaviour {
 				look1.SetActive(false);
 				look2.SetActive(false);
 				n.GetComponent<TextMesh>().fontSize = 50;
+				n.GetComponent<TextMesh>().characterSize = (float)0.1;
 			}
 			else {
 
@@ -314,6 +318,7 @@ public class VRGaze : MonoBehaviour {
 				b.SetActive(false);
 				look1.SetActive(true);
 				look2.SetActive(true);
+				l.transform.position = new Vector3(0, -1, 5);
 
 				// Measures the user's range of motion one last time.
 				if (currentRight > maxRight) {
@@ -425,6 +430,7 @@ public class VRGaze : MonoBehaviour {
 			// Resets the text's font size.
 			if (scene.name == "UE - SCENES") {
 				n.GetComponent<TextMesh>().fontSize = 50;
+				n.GetComponent<TextMesh>().characterSize = (float)0.1;
 			}
 
 			// Loads the next scene when appropriate.
