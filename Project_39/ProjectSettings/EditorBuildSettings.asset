@@ -6,21 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/UE/START.unity
-    guid: 860e31843dfb78d4eb0fab087b338d4f
+    path: Assets/Scenes/High FPS Test/START.unity
+    guid: 0f2aa2405421ed548b6bf49465e90219
   - enabled: 1
-    path: Assets/Scenes/UE/T - 1.unity
-    guid: 769126e97db81cc4db684bb1da0dcfd4
-  - enabled: 1
-    path: Assets/Scenes/UE/T - 2.unity
-    guid: e52f6d111be1ec54b94a6b95bc1079b1
-  - enabled: 1
-    path: Assets/Scenes/UE/T - 3.unity
-    guid: aa42d618f879bf345a4437cccac79b80
-  - enabled: 1
-    path: Assets/Scenes/UE/UE - SCENES.unity
-    guid: 4bb00e8c6543ee949bda07a852c31dbf
-  - enabled: 1
-    path: Assets/Scenes/UE/UE - STOP.unity
-    guid: 8a8bb6e0de75997499aa04fa3bf7d5a4
+    path: Assets/Scenes/High FPS Test/STOP.unity
+    guid: e4f58ef49c8a5354bbee2aa438acfafc
   m_configObjects: {}

@@ -2,12 +2,37 @@ Android
 PlayerPath?
 C:/Users/panca/Desktop/Project-39/Project_39/Project_39.apk
 SceneListBegin?
-Assets/Scenes/UE/START.unity
-Assets/Scenes/UE/T - 1.unity
-Assets/Scenes/UE/T - 2.unity
-Assets/Scenes/UE/T - 3.unity
-Assets/Scenes/UE/UE - SCENES.unity
-Assets/Scenes/UE/UE - STOP.unity
+Assets/Scenes/Dynamic Lights/ON/1 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/2 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/3 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/4 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/5 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/6 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/7 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/8 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/9 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/10 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/11 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/12 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/13 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/14 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/15 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/16 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/17 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/18 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/19 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/20 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/21 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/22 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/23 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/24 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/25 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/26 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/27 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/28 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/29 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/30 - ON.unity
+Assets/Scenes/Dynamic Lights/ON/STOP - ON.unity
 SceneListEnd?
 a1f19ad47d3094e235f21b74dfc423a8 Unity.Postprocessing.Runtime.dll:UnityEngine.Rendering.PostProcessing.PostProcessLayer
 726fcf7961cbb4108aa5be5e55b8c8bf Unity.Postprocessing.Runtime.dll:UnityEngine.Rendering.PostProcessing.ColorGrading
@@ -69,8 +94,6 @@ abf1930d8126d0b2e00e9449129a0190 UnityEngine.UI.dll:UnityEngine.EventSystems.Tou
 f542c1afca5bb4022f91fdda19b8d622 Unity.Postprocessing.Runtime.dll:UnityEngine.Rendering.PostProcessing.DepthOfField
 3bb1b4bae6823a4524e793cdb8702970 Assembly-CSharp.dll:GoogleVR.PermissionsDemo.PermissionsFlowManager
 98ad81e9f689a492509f07e75b810aaa Unity.TextMeshPro.dll:TMPro.TMP_InputField
-71bb6a6b6c8f052f948db64c7dd3ca4f UnityEngine.Advertisements.dll:UnityEngine.Advertisements.CallbackExecutor
-71bb6a6b6c8f052f948db64c7dd3ca4f UnityEngine.Advertisements.dll:UnityEngine.Advertisements.Editor.Placeholder
 cf9f5cf2c3145a37ac07f00e50e460f9 UnityEngine.UI.dll:UnityEngine.UI.AspectRatioFitter
 71bb6a6b6c8f052f948db64c7dd3ca4f UnityEngine.UI.dll:UnityEngine.EventSystems.BaseInput
 5fc094978ce3e3591a7500ed380d854a UnityEngine.UI.dll:UnityEngine.UI.Button
