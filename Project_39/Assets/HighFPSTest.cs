@@ -15,7 +15,8 @@ public class HighFPSTest : MonoBehaviour {
 	double capDeltaTime = 0.0;
 	double capCurrentTime = 0.0;
 	int index = 0;
-	double[] order = {55.0, 56.0, 57.0, 58.0, 59.0, 60.0};
+	// double[] order = {55.0, 56.0, 57.0, 58.0, 59.0, 60.0};
+	double[] order = {61.0, 62.0, 63.0, 64.0, 65.0, 60.0};
 
 	// Start is called before the first frame update
 	void Start() {
@@ -28,12 +29,14 @@ public class HighFPSTest : MonoBehaviour {
 		double frameRate = order[index];
 
 		// Busy waits to cap the FPS.
-		capDeltaTime = 1.0 / frameRate;
-		capCurrentTime = Time.realtimeSinceStartup;
-		while ((capCurrentTime - capOldTime) < capDeltaTime) {
+		if (index == 0 || index == 1 || index == 2 || index == 3 || index == 4) {
+			capDeltaTime = 1.0 / frameRate;
 			capCurrentTime = Time.realtimeSinceStartup;
+			while ((capCurrentTime - capOldTime) < capDeltaTime) {
+				capCurrentTime = Time.realtimeSinceStartup;
+			}
+			capOldTime = Time.realtimeSinceStartup;
 		}
-		capOldTime = Time.realtimeSinceStartup;
 
 		// Logs the FPS every 100 ms.
 		logTime += Time.deltaTime;
